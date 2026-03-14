@@ -331,7 +331,7 @@ def draw_cell_text(
 
 def render_sheet_to_png(ws, output_png: str) -> None:
     header_font = load_font(45, bold=True)
-    body_font = load_font(21, bold=False)
+    body_font = load_font(45, bold=True)
 
     # Convert Excel widths/heights to pixels
     col_widths_px: List[int] = []
