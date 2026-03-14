@@ -143,14 +143,14 @@ def optimize_layout(ws):
         "Characteristic 1": 12,
         "Characteristic 2": 12,
         "Observation type": 34,
-        "Clockface references": 12,
-        "Continuing defect": 12,
-        "End of": 12,
-        "Observation step": 12,
-        "Note": 24,
-        "Severity": 12,
-        "Longitude": 12,
-        "Latitude": 12,
+        "Clockface references": 9,
+        "Continuing defect": 9,
+        "End of": 9,
+        "Observation step": 9,
+        "Note": 9,
+        "Severity": 9,
+        "Longitude": 9,
+        "Latitude": 9,
     }
 
     min_width = 8
