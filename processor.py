@@ -134,20 +134,20 @@ def color_severity_column(ws):
 def optimize_layout(ws):
 
     preferred_widths = {
-        "Created": 18,
-        "Position in current video": 16,
-        "Position from first video": 16,
-        "Position from the start (m)": 12,
-        "Distance from the previous manhole (m)": 18,
+        "Created": 10,
+        "Position in current video": 10,
+        "Position from first video": 10,
+        "Position from the start (m)": 10,
+        "Distance from the previous manhole (m)": 10,
         "Code": 8,
-        "Characteristic 1": 12,
-        "Characteristic 2": 12,
-        "Observation type": 34,
+        "Characteristic 1": 10,
+        "Characteristic 2": 10,
+        "Observation type": 38,
         "Clockface references": 9,
         "Continuing defect": 9,
         "End of": 9,
         "Observation step": 9,
-        "Note": 9,
+        "Note": 12,
         "Severity": 9,
         "Longitude": 9,
         "Latitude": 9,
@@ -330,8 +330,8 @@ def draw_cell_text(
 
 
 def render_sheet_to_png(ws, output_png: str) -> None:
-    header_font = load_font(15, bold=True)
-    body_font = load_font(14, bold=False)
+    header_font = load_font(18, bold=True)
+    body_font = load_font(17, bold=False)
 
     # Convert Excel widths/heights to pixels
     col_widths_px: List[int] = []
