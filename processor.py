@@ -330,8 +330,8 @@ def draw_cell_text(
 
 
 def render_sheet_to_png(ws, output_png: str) -> None:
-    header_font = load_font(18, bold=True)
-    body_font = load_font(17, bold=False)
+    header_font = load_font(45, bold=True)
+    body_font = load_font(21, bold=False)
 
     # Convert Excel widths/heights to pixels
     col_widths_px: List[int] = []
@@ -342,7 +342,7 @@ def render_sheet_to_png(ws, output_png: str) -> None:
     row_heights_px: List[int] = []
     for row in range(1, ws.max_row + 1):
         height = ws.row_dimensions[row].height or 20
-        row_heights_px.append(int(height * 2))
+        row_heights_px.append(int(height * 2.5))
 
     img_width = sum(col_widths_px) + 1
     img_height = sum(row_heights_px) + 1
