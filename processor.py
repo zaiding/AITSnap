@@ -174,7 +174,7 @@ def optimize_layout(ws):
 
             max_len = max(max_len, line_max)
 
-        estimated = min(max(max_len + 5, min_width), max_width_default)
+        estimated = min(max(max_len + 2, min_width), max_width_default)
 
         ws.column_dimensions[get_column_letter(col)].width = estimated
 # Render excel to image code
@@ -342,7 +342,7 @@ def render_sheet_to_png(ws, output_png: str) -> None:
     row_heights_px: List[int] = []
     for row in range(1, ws.max_row + 1):
         height = ws.row_dimensions[row].height or 20
-        row_heights_px.append(int(height * 1.35))
+        row_heights_px.append(int(height * 2))
 
     img_width = sum(col_widths_px) + 1
     img_height = sum(row_heights_px) + 1
