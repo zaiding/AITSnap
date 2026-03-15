@@ -81,23 +81,39 @@ if st.session_state.processed:
             f"""
             <html>
             <body style="margin:0; padding:0; overflow:hidden; background:transparent;">
-                <div style="display:flex; align-items:center; justify-content:center; height:38px;">
-                    <button onclick="copyImage()" style="
+                <div style="height:38px; display:flex; align-items:center; justify-content:center;">
+                    <button id="copyBtn" onclick="copyImage()" style="
                         width:100%;
                         height:38px;
-                        color:white;
                         font-size:15px;
                         border-radius:8px;
-                        border:1px solid rgba(250,250,250,0.2);
+                        border:1px solid;
                         background:transparent;
                         cursor:pointer;
                         margin:0;
+                        transition:all 0.2s ease;
                     ">
                         Copy Image
                     </button>
                 </div>
         
                 <script>
+                let currentTextColor = "inherit";
+        
+                function applyTheme() {{
+                    try {{
+                        const btn = document.getElementById("copyBtn");
+                        const parentBody = window.parent.document.body;
+                        const parentStyles = window.parent.getComputedStyle(parentBody);
+        
+                        currentTextColor = parentStyles.color || "inherit";
+        
+                        btn.style.color = currentTextColor;
+                        btn.style.background = "transparent";
+                        btn.style.borderColor = currentTextColor;
+                    }} catch (e) {{}}
+                }}
+        
                 async function copyImage() {{
                     const response = await fetch("data:image/png;base64,{img_base64}");
                     const blob = await response.blob();
@@ -105,10 +121,22 @@ if st.session_state.processed:
                         new ClipboardItem({{"image/png": blob}})
                     ]);
                 }}
+        
+                const btn = document.getElementById("copyBtn");
+        
+                btn.addEventListener("mouseenter", () => {{
+                    btn.style.background = "rgba(127,127,127,0.12)";
+                }});
+        
+                btn.addEventListener("mouseleave", () => {{
+                    btn.style.background = "transparent";
+                }});
+        
+                applyTheme();
+                setInterval(applyTheme, 1000);
                 </script>
             </body>
             </html>
             """,
             height=38,
-
         )
