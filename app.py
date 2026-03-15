@@ -51,6 +51,27 @@ if st.session_state.processed:
 
     st.image(st.session_state.image_bytes)
 
+    # convert image to base64
+    img_base64 = base64.b64encode(st.session_state.image_bytes).decode()
+    
+    components.html(f"""
+    <button onclick="copyImage()">Copy Image to Clipboard</button>
+    
+    <script>
+    async function copyImage() {{
+        const response = await fetch("data:image/png;base64,{img_base64}");
+        const blob = await response.blob();
+    
+        await navigator.clipboard.write([
+            new ClipboardItem({{"image/png": blob}})
+        ]);
+    
+        alert("Image copied to clipboard!");
+    }}
+    </script>
+    """, height=60)
+
+    
     st.download_button(
         label="Download Excel",
         data=st.session_state.excel_bytes,
