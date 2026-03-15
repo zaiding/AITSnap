@@ -82,15 +82,14 @@ if st.session_state.processed:
 
             <button onclick="copyImage()" style="
                 width:100%;
+                color : white;
                 height:38px;
                 font-size:15px;
                 border-radius:8px;
                 border:1px solid rgba(250,250,250,0.2);
                 background:transparent;
                 cursor:pointer;
-                display:flex;
-                align-items:center;
-                justify-content:center;
+
             ">
             Copy Image
             </button>
