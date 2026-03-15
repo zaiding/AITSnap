@@ -79,11 +79,12 @@ if st.session_state.processed:
     
         components.html(
             f"""
+            <div style="display:flex; align-items:center; height:38px;">
             <button onclick="copyImage()" style="
                 width:100%;
                 color : white;
                 font-size :15px;
-                padding:0;
+                padding:0.55rem;
                 height : 200%;
                 border-radius:8px;
                 border:1px solid rgba(250,250,250,0.2);
@@ -92,7 +93,7 @@ if st.session_state.processed:
             ">
             Copy Image
             </button>
-    
+            </div>
             <script>
             async function copyImage() {{
                 const response = await fetch("data:image/png;base64,{img_base64}");
@@ -103,5 +104,5 @@ if st.session_state.processed:
             }}
             </script>
             """,
-            height=50,
+            height=52,
         )
