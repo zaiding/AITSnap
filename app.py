@@ -79,30 +79,36 @@ if st.session_state.processed:
     
         components.html(
             f"""
-
-            <button onclick="copyImage()" style="
-                width:100%;
-                color : white;
-                height:38px;
-                font-size:15px;
-                border-radius:8px;
-                border:1px solid rgba(250,250,250,0.2);
-                background:transparent;
-                cursor:pointer;
-                align-items:top;
-            ">
-            Copy Image
-            </button>
-            
-            <script>
-            async function copyImage() {{
-                const response = await fetch("data:image/png;base64,{img_base64}");
-                const blob = await response.blob();
-                await navigator.clipboard.write([
-                    new ClipboardItem({{"image/png": blob}})
-                ]);
-            }}
-            </script>
+            <html>
+            <body style="margin:0; padding:0; overflow:hidden; background:transparent;">
+                <div style="display:flex; align-items:center; justify-content:center; height:38px;">
+                    <button onclick="copyImage()" style="
+                        width:100%;
+                        height:38px;
+                        color:white;
+                        font-size:15px;
+                        border-radius:8px;
+                        border:1px solid rgba(250,250,250,0.2);
+                        background:transparent;
+                        cursor:pointer;
+                        margin:0;
+                    ">
+                        Copy Image
+                    </button>
+                </div>
+        
+                <script>
+                async function copyImage() {{
+                    const response = await fetch("data:image/png;base64,{img_base64}");
+                    const blob = await response.blob();
+                    await navigator.clipboard.write([
+                        new ClipboardItem({{"image/png": blob}})
+                    ]);
+                }}
+                </script>
+            </body>
+            </html>
             """,
-            height=52,
+            height=38,
+
         )
