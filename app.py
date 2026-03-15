@@ -81,6 +81,7 @@ if st.session_state.processed:
             f"""
             <button onclick="copyImage()" style="
                 width:100%;
+                color : white;
                 padding:0.55rem;
                 border-radius:8px;
                 border:1px solid rgba(250,250,250,0.2);
