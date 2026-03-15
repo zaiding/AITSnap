@@ -103,5 +103,5 @@ if st.session_state.processed:
             }}
             </script>
             """,
-            height=52,
+            height=45,
         )
