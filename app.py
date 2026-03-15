@@ -1,6 +1,7 @@
 import streamlit as st
 import tempfile
-from pathlib import Path
+import base64
+import streamlit.components.v1 as components
 from processor import process_excel
 
 st.title("AIT Snap")
