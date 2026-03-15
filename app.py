@@ -50,39 +50,55 @@ if uploaded_file is not None:
 if st.session_state.processed:
     st.success("Processing finished")
 
-    st.image(st.session_state.image_bytes)
-
     # convert image to base64
-    img_base64 = base64.b64encode(st.session_state.image_bytes).decode()
     
-    components.html(f"""
-    <button onclick="copyImage()">Copy Image to Clipboard</button>
+    st.image(st.session_state.image_bytes)
     
-    <script>
-    async function copyImage() {{
-        const response = await fetch("data:image/png;base64,{img_base64}");
-        const blob = await response.blob();
+    col1, col2, col3 = st.columns(3)
     
-        await navigator.clipboard.write([
-            new ClipboardItem({{"image/png": blob}})
-        ]);
+    with col1:
+        st.download_button(
+            label="Download Excel",
+            data=st.session_state.excel_bytes,
+            file_name="processed.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True,
+        )
     
-        alert("Image copied to clipboard!");
-    }}
-    </script>
-    """, height=60)
-
+    with col2:
+        st.download_button(
+            label="Download Image",
+            data=st.session_state.image_bytes,
+            file_name="table.png",
+            mime="image/png",
+            use_container_width=True,
+        )
     
-    st.download_button(
-        label="Download Excel",
-        data=st.session_state.excel_bytes,
-        file_name="processed.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    )
-
-    st.download_button(
-        label="Download Image",
-        data=st.session_state.image_bytes,
-        file_name="table.png",
-        mime="image/png",
-    )
+    with col3:
+        img_base64 = base64.b64encode(st.session_state.image_bytes).decode()
+    
+        components.html(
+            f"""
+            <button onclick="copyImage()" style="
+                width:100%;
+                padding:0.55rem;
+                border-radius:8px;
+                border:1px solid rgba(250,250,250,0.2);
+                background:transparent;
+                cursor:pointer;
+            ">
+            Copy Image
+            </button>
+    
+            <script>
+            async function copyImage() {{
+                const response = await fetch("data:image/png;base64,{img_base64}");
+                const blob = await response.blob();
+                await navigator.clipboard.write([
+                    new ClipboardItem({{"image/png": blob}})
+                ]);
+            }}
+            </script>
+            """,
+            height=50,
+        )
