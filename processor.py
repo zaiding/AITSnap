@@ -140,9 +140,9 @@ def optimize_layout(ws):
         "Position from the start (m)": 12,
         "Distance from the previous manhole (m)": 18,
         "Code": 8,
-        "Characteristic 1": 12,
-        "Characteristic 2": 12,
-        "Observation type": 38,
+        "Characteristic 1": 13,
+        "Characteristic 2": 13,
+        "Observation type": 50,
         "Clockface references": 12,
         "Continuing defect": 12,
         "End of": 12,
@@ -342,7 +342,7 @@ def render_sheet_to_png(ws, output_png: str) -> None:
     row_heights_px: List[int] = []
     for row in range(1, ws.max_row + 1):
         height = ws.row_dimensions[row].height or 20
-        row_heights_px.append(int(height * 2.5))
+        row_heights_px.append(int(height * 3))
 
     img_width = sum(col_widths_px) + 1
     img_height = sum(row_heights_px) + 1
