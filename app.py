@@ -79,12 +79,12 @@ if st.session_state.processed:
     
         components.html(
             f"""
-            <div style="display:flex; align-items:center; height:45px;">
+            <div style="display:flex; align-items:center; height:38;">
             <button onclick="copyImage()" style="
                 width:100%;
                 color : white;
-                font-size :15px;
-                padding:0.55rem;
+                font-size :16px;
+                padding:0.45rem;
                 border-radius:8px;
                 border:1px solid rgba(250,250,250,0.2);
                 background:transparent;
