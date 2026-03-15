@@ -212,13 +212,13 @@ def load_font(size: int, bold: bool = False):
     candidates = []
     if bold:
         candidates.extend([
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-            "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf",
+            "times.ttf",
+            "times.ttf",
         ])
     else:
         candidates.extend([
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+            "times.ttf",
+            "times.ttf",
         ])
 
     for path in candidates:
@@ -330,8 +330,8 @@ def draw_cell_text(
 
 
 def render_sheet_to_png(ws, output_png: str) -> None:
-    header_font = load_font(45, bold=True)
-    body_font = load_font(45, bold=True)
+    header_font = load_font(18, bold=True)
+    body_font = load_font(17, bold=False)
 
     # Convert Excel widths/heights to pixels
     col_widths_px: List[int] = []
