@@ -89,7 +89,7 @@ if st.session_state.processed:
                 border:1px solid rgba(250,250,250,0.2);
                 background:transparent;
                 cursor:pointer;
-
+                align-items:top;
             ">
             Copy Image
             </button>
