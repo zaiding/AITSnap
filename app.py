@@ -87,7 +87,7 @@ if st.session_state.processed:
                         height:38px;
                         font-size:15px;
                         border-radius:8px;
-                        border:10px groove;
+                        border:0.3px groove;
                         background:transparent;
                         cursor:pointer;
                         margin:0;
