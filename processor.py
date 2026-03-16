@@ -16,9 +16,9 @@ SEVERITY_COLORS: Dict[str, Optional[str]] = {
     "very low": "00B050",
     "low": "00B050",
     "medium": "FFFF00",
-    "high": "F4B183",
-    "very high": "0000ff",
-    "critical": "0000ff",
+    "high": "ff9900",
+    "Very high": "ff0000",
+    "Critical": "ff0000",
     "unknown": None,
     "unknow": None,
 }
