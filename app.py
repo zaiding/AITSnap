@@ -88,6 +88,7 @@ if st.session_state.processed:
                         font-size:15px;
                         border-radius:8px;
                         border:1px ridge;
+                        border-color : #ccc;
                         background:transparent;
                         cursor:pointer;
                         margin:0;
