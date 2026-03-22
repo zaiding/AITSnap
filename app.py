@@ -29,7 +29,6 @@ if "excel_bytes" not in st.session_state:
     st.session_state.excel_bytes = None
 
 uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
-raw_data = process_excel_ai_agent(uploaded_file)
 
 if uploaded_file is not None:
     st.success("File uploaded")
@@ -47,6 +46,7 @@ if uploaded_file is not None:
 
         with st.spinner("Processing..."):
             process_excel(input_path, output_excel, output_png)
+            raw_data = process_excel_ai_agent(input_path)
 
         with open(output_excel, "rb") as f:
             st.session_state.excel_bytes = f.read()
