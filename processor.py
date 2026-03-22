@@ -451,8 +451,10 @@ def process_excel_ai_agent(
     # delete Video column
     columns_to_delete = ['Video', 'Created', 'Position in current video', 'Position from first video', 'Code', 'Characteristic 1', 'Characteristic 2', 
                          'Clockface references', 'Continuing defect', 'End of', 'Observation step', 'Longitude', 'Latitude']
-    for column in columns_to_delete:
-        delete_column_if_needed(ws, column, True)
+    
+    # for column in columns_to_delete:
+        
+    #     delete_column_if_needed(ws, column, True)
 
     # Observation Note
     idx = find_column_index(ws, "Note")
