@@ -10,7 +10,7 @@ from google.genai import types
 
 API_KEY = "AIzaSyDQquorxuGIi6_WHmhg89XFxd7UcEQFYJs"
 my_instructions = "Analyze the following inspection data and produce a concise technical conclusion. Structure your answer as:1. General condition (overall assessment) 2. Main defects (type, location, severity, brief interpretation) 3. Impact (structural and/or hydraulic) 4. Risks (short-term / long-term)5. Recommended actions | Rules:- Be concise and technical - Synthesize, do not list all data - Do not invent missing information - Highlight uncertainties if any"
-
+lst_global = []
 # analyze_data(my_instructions, raw_data)
 
 
@@ -46,7 +46,7 @@ if uploaded_file is not None:
 
         with st.spinner("Processing..."):
             process_excel(input_path, output_excel, output_png)
-            raw_data = process_excel_ai_agent(input_path, API_KEY)
+            lst_global.append(process_excel_ai_agent(input_path, API_KEY))
 
         with open(output_excel, "rb") as f:
             st.session_state.excel_bytes = f.read()
@@ -153,4 +153,4 @@ if st.session_state.processed:
             height=38,
         )
     st.write("unplead oeirhfeoi jfhazoiehf r hgez fouiqgezfuioze gfiuoqez gfoiuze gfqozie gf:")
-    st.write(str(analyze_data(my_instructions, raw_data)))
+    st.write(str(analyze_data(my_instructions, lst_global[0])))
