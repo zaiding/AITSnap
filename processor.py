@@ -433,5 +433,31 @@ def process_excel(
     wb.save(output_xlsx)
     render_sheet_to_png(ws, output_png)
 
-
     return output_xlsx, output_png
+
+
+
+def process_excel_ai_agent(
+    input_xlsx: str,
+    sheet_name: Optional[str] = None
+    ):
+
+    wb = load_workbook(input_xlsx)
+
+    ws = wb[sheet_name] if sheet_name else wb.active
+
+
+    # delete Video column
+    columns_to_delete = ['Video', 'Created', 'Position in current video', 'Position from first video', 'Code', 'Characteristic 1', 'Characteristic 2', 
+                         'Clockface references', 'Continuing defect', 'End of', 'Observation step', 'Longitude', 'Latitude']
+    for column in columns_to_delete:
+        delete_column_if_needed(ws, column, True)
+
+    # Observation Note
+    idx = find_column_index(ws, "Note")
+
+    if idx:
+        values = [normalize_text(ws.cell(r, idx).value) for r in range(2, ws.max_row + 1)]
+        delete_column_if_needed(ws, "Note", all_values_empty(values))
+    sheet_text = list(ws.values)
+    return sheet_text
