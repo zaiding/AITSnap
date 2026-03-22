@@ -463,7 +463,7 @@ def process_excel_ai_agent(
     sheet_text = list(ws.values)
     return sheet_text
 
-def analyze_data(prompt_text, raw_data):
+def analyze_data(prompt_text, raw_data, API_KEY):
     client = genai.Client(api_key=API_KEY)
 
     # Combine the prompt and the data clearly
