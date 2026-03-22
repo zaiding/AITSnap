@@ -10,8 +10,7 @@ from google.genai import types
 
 API_KEY = "AIzaSyDQquorxuGIi6_WHmhg89XFxd7UcEQFYJs"
 my_instructions = "Analyze the following inspection data and produce a concise technical conclusion. Structure your answer as:1. General condition (overall assessment) 2. Main defects (type, location, severity, brief interpretation) 3. Impact (structural and/or hydraulic) 4. Risks (short-term / long-term)5. Recommended actions | Rules:- Be concise and technical - Synthesize, do not list all data - Do not invent missing information - Highlight uncertainties if any"
-excel_file = 'C:/Users/TJC722/OneDrive - SUEZ/AXEO TP - Axeo Files/Mini Python Tasks/AIT_obs/obs.xlsx'
-raw_data = process_excel_ai_agent(excel_file)
+
 # analyze_data(my_instructions, raw_data)
 
 
@@ -30,6 +29,7 @@ if "excel_bytes" not in st.session_state:
     st.session_state.excel_bytes = None
 
 uploaded_file = st.file_uploader("Upload Excel file", type=["xlsx"])
+raw_data = process_excel_ai_agent(uploaded_file)
 
 if uploaded_file is not None:
     st.success("File uploaded")
