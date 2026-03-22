@@ -2,9 +2,18 @@ import streamlit as st
 import tempfile
 import base64
 import streamlit.components.v1 as components
-from processor import process_excel, process_excel_ai_agent
+from processor import process_excel, process_excel_ai_agent, analyze_data
 from google import genai
 from google.genai import types
+
+
+
+API_KEY = "AIzaSyDQquorxuGIi6_WHmhg89XFxd7UcEQFYJs"
+my_instructions = "Analyze the following inspection data and produce a concise technical conclusion. Structure your answer as:1. General condition (overall assessment) 2. Main defects (type, location, severity, brief interpretation) 3. Impact (structural and/or hydraulic) 4. Risks (short-term / long-term)5. Recommended actions | Rules:- Be concise and technical - Synthesize, do not list all data - Do not invent missing information - Highlight uncertainties if any"
+excel_file = 'C:/Users/TJC722/OneDrive - SUEZ/AXEO TP - Axeo Files/Mini Python Tasks/AIT_obs/obs.xlsx'
+raw_data = process_excel_ai_agent(excel_file)
+# analyze_data(my_instructions, raw_data)
+
 
 st.title("AIT Snap")
 st.write("Upload an inspection Excel file from AIT platform, process it, then download the Excel or image output.")
@@ -143,5 +152,5 @@ if st.session_state.processed:
             """,
             height=38,
         )
-    st.write("unplead oeirhfeoi jfhazoiehf r hrjazoi hrjazoip rhazopie hraeiozp rhaozi prhazoi rhazoi rhaozi rhaoei rhfaeoi hfraeozi rhaeozi rha sdifhzqeoifuhqezrouifh qezouifzgheo ifugez fouiqgezfuioze gfiuoqez gfoiuze gfqozie gf.")
-
+    st.write("unplead oeirhfeoi jfhazoiehf r hgez fouiqgezfuioze gfiuoqez gfoiuze gfqozie gf:")
+    st.write(str(analyze_data(my_instructions, raw_data))
