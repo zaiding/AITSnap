@@ -46,7 +46,7 @@ if uploaded_file is not None:
 
         with st.spinner("Processing..."):
             process_excel(input_path, output_excel, output_png)
-            raw_data = process_excel_ai_agent(input_path)
+            raw_data = process_excel_ai_agent(input_path, API_KEY)
 
         with open(output_excel, "rb") as f:
             st.session_state.excel_bytes = f.read()
