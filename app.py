@@ -2,7 +2,9 @@ import streamlit as st
 import tempfile
 import base64
 import streamlit.components.v1 as components
-from processor import process_excel
+from processor import process_excel, process_excel_ai_agent
+from google import genai
+from google.genai import types
 
 st.title("AIT Snap")
 st.write("Upload an inspection Excel file from AIT platform, process it, then download the Excel or image output.")
@@ -141,3 +143,4 @@ if st.session_state.processed:
             """,
             height=38,
         )
+print("hiiiidddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddiii")
