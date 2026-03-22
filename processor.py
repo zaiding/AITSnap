@@ -8,7 +8,8 @@ from openpyxl import load_workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from PIL import Image, ImageDraw, ImageFont
-
+from google import genai
+from google.genai import types
 
 
 
@@ -461,3 +462,43 @@ def process_excel_ai_agent(
         delete_column_if_needed(ws, "Note", all_values_empty(values))
     sheet_text = list(ws.values)
     return sheet_text
+
+def analyze_data(prompt_text, raw_data):
+    client = genai.Client(api_key=API_KEY)
+
+    # Combine the prompt and the data clearly
+    combined_input = f"""
+    INSTRUCTIONS:
+    {prompt_text}
+
+    RAW DATA TO ANALYZE:
+    ---
+    {raw_data}
+    ---
+    """
+
+    contents = [
+        types.Content(
+            role="user",
+            parts=[types.Part.from_text(text=combined_input)],
+        ),
+    ]
+
+    # Configuration for Deep Thinking and Search
+    generate_content_config = types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(include_thoughts=True),
+        tools=[types.Tool(google_search=types.GoogleSearch())],
+    )
+
+    print("\n--- ANALYZING (Streaming Response) ---\n")
+    
+    for chunk in client.models.generate_content_stream(
+        model="gemini-2.0-flash", 
+        contents=contents,
+        config=generate_content_config,
+    ):
+        # chunk.text contains the final answer
+        # if you want to see the 'thinking', you check chunk.thought
+        if chunk.text:
+            print(chunk.text, end="")
+
