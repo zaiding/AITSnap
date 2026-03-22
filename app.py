@@ -153,4 +153,5 @@ if st.session_state.processed:
             height=38,
         )
     st.write("unplead oeirhfeoi jfhazoiehf r hgez fouiqgezfuioze gfiuoqez gfoiuze gfqozie gf:")
+    st.write(f'Print : {lst_global[0]}')
     st.write(str(analyze_data(my_instructions, lst_global[0])))
