@@ -455,7 +455,7 @@ def process_excel_ai_agent(
     for column in columns_to_delete:
         try:
             delete_column_if_needed(ws, column, True)
-        except :
+        except:
             continue
 
     # Observation Note
@@ -464,13 +464,14 @@ def process_excel_ai_agent(
     if idx:
         values = [normalize_text(ws.cell(r, idx).value) for r in range(2, ws.max_row + 1)]
         delete_column_if_needed(ws, "Note", all_values_empty(values))
+
     sheet_text = list(ws.values)
     return sheet_text
 
-def analyze_data(prompt_text, raw_data, API_KEY):
+
+def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
     client = genai.Client(api_key=API_KEY)
 
-    # Combine the prompt and the data clearly
     combined_input = f"""
     INSTRUCTIONS:
     {prompt_text}
@@ -488,21 +489,19 @@ def analyze_data(prompt_text, raw_data, API_KEY):
         ),
     ]
 
-    # Configuration for Deep Thinking and Search
     generate_content_config = types.GenerateContentConfig(
         thinking_config=types.ThinkingConfig(include_thoughts=True),
         tools=[types.Tool(google_search=types.GoogleSearch())],
     )
 
-    print("\n--- ANALYZING (Streaming Response) ---\n")
-    
+    # Collect all streamed chunks into a single string and return it
+    result_parts: List[str] = []
     for chunk in client.models.generate_content_stream(
-        model="gemini-2.0-flash", 
+        model="gemini-2.0-flash",
         contents=contents,
         config=generate_content_config,
     ):
-        # chunk.text contains the final answer
-        # if you want to see the 'thinking', you check chunk.thought
         if chunk.text:
-            print(chunk.text, end="")
+            result_parts.append(chunk.text)
 
+    return "".join(result_parts)
