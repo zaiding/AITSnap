@@ -120,8 +120,7 @@ if st.session_state.processed:
                         width:100%;
                         height:38px;
                         font-size:15px;
-                        border-radius:18px;
-                        border: 1px solid rgba(0, 0, 255, 0.1);
+                        border: 0;
                         background:transparent;
                         cursor:pointer;
                         margin:0;
