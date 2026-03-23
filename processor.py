@@ -486,8 +486,20 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
         "gemini-1.5-pro-latest",
     ]
 
+    # List available models to find a working one
+    try:
+        available = [m.name for m in client.models.list()]
+    except Exception as e:
+        return f"Could not list models: {e}"
+
+    # Filter to models that support generateContent
+    candidates = [m for m in available if "gemini" in m.lower()]
+
+    if not candidates:
+        return f"No gemini models available. All models: {available}"
+
     last_error = None
-    for model_name in models_to_try:
+    for model_name in candidates:
         try:
             response = client.models.generate_content(
                 model=model_name,
@@ -498,4 +510,4 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
             last_error = e
             continue
 
-    return f"AI analysis failed (tried all models): {last_error}"
+    return f"All models failed. Tried: {candidates}. Last error: {last_error}"
