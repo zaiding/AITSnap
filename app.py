@@ -15,7 +15,7 @@ MY_INSTRUCTIONS = (
             "Vary sentence structure and wording to feel organic and not templated"
             "Focus only on the most important defects and overall condition"
             "Summarize trends (e.g., worsening defects) instead of listing all observations"
-            "Highlight the most critical issue and its approximate location"
+            "Highlight the most critical issue and its approximate location, and take in consideration the severity of the defects"
             "Mention other defects briefly without detailing each one"
             "End with a clear overall impression of the pipe condition"
             "Avoid:"
