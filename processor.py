@@ -478,11 +478,24 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
         f"RAW DATA TO ANALYZE:\n---\n{raw_data}\n---"
     )
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-1.5-flash",
-            contents=combined_input,
-        )
-        return response.text or ""
-    except Exception as e:
-        return f"AI analysis failed: {e}"
+    # Try models in order until one works
+    models_to_try = [
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-pro-latest",
+    ]
+
+    last_error = None
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=combined_input,
+            )
+            return response.text or ""
+        except Exception as e:
+            last_error = e
+            continue
+
+    return f"AI analysis failed (tried all models): {last_error}"
