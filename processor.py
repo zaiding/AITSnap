@@ -489,17 +489,11 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
         ),
     ]
 
-    generate_content_config = types.GenerateContentConfig(
-        thinking_config=types.ThinkingConfig(include_thoughts=True),
-        tools=[types.Tool(google_search=types.GoogleSearch())],
-    )
-
     # Collect all streamed chunks into a single string and return it
     result_parts: List[str] = []
     for chunk in client.models.generate_content_stream(
         model="gemini-2.0-flash",
         contents=contents,
-        config=generate_content_config,
     ):
         if chunk.text:
             result_parts.append(chunk.text)
