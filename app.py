@@ -121,8 +121,7 @@ if st.session_state.processed:
                         height:38px;
                         font-size:15px;
                         border-radius:18px;
-                        border:1px ridge;
-                        border-color : rgba(0, 0, 255, 0.1);
+                        border: 1px solid rgba(0, 0, 255, 0.1);
                         background:transparent;
                         cursor:pointer;
                         margin:0;
