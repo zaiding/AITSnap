@@ -480,7 +480,7 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
 
     # Try models in order until one works
     models_to_try = [
-        "gemini-2.5-flash-preview-04-17",
+        "gemini-2.5-flash",
         "gemini-2.0-flash-lite",
         "gemini-1.5-flash-latest",
         "gemini-1.5-pro-latest",
@@ -488,7 +488,7 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
 
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash-preview-04-17",
+            model="gemini-2.5-flash",
             contents=combined_input,
         )
         return response.text or ""
