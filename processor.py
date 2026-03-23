@@ -469,33 +469,20 @@ def process_excel_ai_agent(
     return sheet_text
 
 
+
 def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
     client = genai.Client(api_key=API_KEY)
 
-    combined_input = f"""
-    INSTRUCTIONS:
-    {prompt_text}
+    combined_input = (
+        f"INSTRUCTIONS:\n{prompt_text}\n\n"
+        f"RAW DATA TO ANALYZE:\n---\n{raw_data}\n---"
+    )
 
-    RAW DATA TO ANALYZE:
-    ---
-    {raw_data}
-    ---
-    """
-
-    contents = [
-        types.Content(
-            role="user",
-            parts=[types.Part.from_text(text=combined_input)],
-        ),
-    ]
-
-    # Collect all streamed chunks into a single string and return it
-    result_parts: List[str] = []
-    for chunk in client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=contents,
-    ):
-        if chunk.text:
-            result_parts.append(chunk.text)
-
-    return "".join(result_parts)
+    try:
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=combined_input,
+        )
+        return response.text or ""
+    except Exception as e:
+        return f"AI analysis failed: {e}"
