@@ -491,7 +491,7 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
 
     # Collect all streamed chunks into a single string and return it
     result_parts: List[str] = []
-    for chunk in client.models.generate_content_stream(
+    for chunk in client.models.generate_content(
         model="gemini-2.0-flash",
         contents=contents,
     ):
