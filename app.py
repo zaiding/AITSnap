@@ -5,7 +5,7 @@ import streamlit.components.v1 as components
 from processor import process_excel, process_excel_ai_agent, analyze_data
 
 
-API_KEY = "AIzaSyDQquorxuGIi6_WHmhg89XFxd7UcEQFYJs"
+API_KEY = st.secrets["GEMINI_API_KEY"]
 MY_INSTRUCTIONS = (
     "Analyze the following inspection data and produce a concise technical conclusion. "
     "Structure your answer as: "
