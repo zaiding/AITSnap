@@ -7,15 +7,21 @@ from processor import process_excel, process_excel_ai_agent, analyze_data
 
 API_KEY = st.secrets["GEMINI_API_KEY"]
 MY_INSTRUCTIONS = (
-    "Analyze the following inspection data and produce a concise technical conclusion. "
-    "Structure your answer as: "
-    "1. General condition (overall assessment) "
-    "2. Main defects (type, location, severity, brief interpretation) "
-    "3. Impact (structural and/or hydraulic) "
-    "4. Risks (short-term / long-term) "
-    "5. Recommended actions | "
-    "Rules: - Be concise and technical - Synthesize, do not list all data "
-    "- Do not invent missing information - Highlight uncertainties if any"
+            "Write a concise, high-level conclusion of the CCTV inspection" 
+            "Requirements:"
+            "Use a short narrative format (1–4 paragraphs maximum)"
+            "Instead of CCTV inspection word, use SewerBall Camera inspection"
+            "Do NOT use bullet points, lists, or section headings"
+            "Focus only on the most important defects and overall condition"
+            "Summarize trends (e.g., worsening defects) instead of listing all observations"
+            "Keep a natural, fluid, and professional tone (not a structured report)"
+            "Highlight the most critical issue and its approximate location"
+            "Mention other defects briefly without detailing each one"
+            "End with an overall conclusion"
+            "Avoid:"
+            "Breaking the answer into sections (no General Condition, Risks, etc.)"
+            "Exhaustive defect-by-defect descriptions"
+            "Overly technical or verbose explanations"
 )
 
 
