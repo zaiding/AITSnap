@@ -7,21 +7,30 @@ from processor import process_excel, process_excel_ai_agent, analyze_data
 
 API_KEY = st.secrets["GEMINI_API_KEY"]
 MY_INSTRUCTIONS = (
-            "Write a concise, high-level conclusion of the CCTV inspection" 
+            "Write a concise, high-level conclusion of the SewerBall Camera inspection."
             "Requirements:"
-            "Use a short narrative format (1–4 paragraphs maximum)"
-            "Instead of CCTV inspection word, use SewerBall Camera inspection"
-            "Do NOT use bullet points, lists, or section headings"
+            "Use a short narrative format (1–2 paragraphs maximum)"
+            "Write in a natural, human-like way, as if an experienced engineer is summarizing their impression"
+            "Avoid generic or repetitive AI-style phrasing (e.g., Overall, it can be concluded that...)"
+            "Vary sentence structure and wording to feel organic and not templated"
             "Focus only on the most important defects and overall condition"
             "Summarize trends (e.g., worsening defects) instead of listing all observations"
-            "Keep a natural, fluid, and professional tone (not a structured report)"
             "Highlight the most critical issue and its approximate location"
             "Mention other defects briefly without detailing each one"
-            "End with an overall conclusion"
+            "End with a clear overall impression of the pipe condition"
             "Avoid:"
-            "Breaking the answer into sections (no General Condition, Risks, etc.)"
+            "Bullet points, lists, or section headings"
+            "Breaking the answer into sections"
             "Exhaustive defect-by-defect descriptions"
             "Overly technical or verbose explanations"
+            "Generate 3 different versions of the conclusion. Each version should:"
+            "Convey the same key information"
+            "Use different wording, structure, and tone"
+            "Feel like it was written independently"
+            "Separate the 3 versions clearly using:"
+            "Conclusion 1:"
+            "Conclusion 2:"
+            "Conclusion 3:"
 )
 
 
