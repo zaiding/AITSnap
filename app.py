@@ -123,7 +123,7 @@ if st.session_state.processed:
                         border-radius:8px;
                         border:1px solid;
                         border-color : rgba(204, 204, 204, .3);
-                        background:transparent;
+                        background:rgb(19,23,32);
                         cursor:pointer;
                         margin:0;
                         transition:all 0.2s ease;
@@ -159,7 +159,7 @@ if st.session_state.processed:
                 const btn = document.getElementById("copyBtn");
 
                 btn.addEventListener("mouseenter", () => {{
-                    btn.style.background = "rgb(19,23,32)";
+                    btn.style.background = "rgb(172,177,195)";
                 }});
 
                 btn.addEventListener("mouseleave", () => {{
