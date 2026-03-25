@@ -114,7 +114,7 @@ if st.session_state.processed:
         components.html(
             f"""
             <html>
-            <body style="margin:0; padding:0; overflow:hidden; background:transparent;">
+            <body style="margin:0; padding:0; overflow:hidden; background:rgb(38,39,48);">
                 <div style="height:38px; display:flex; align-items:center; justify-content:center;">
                     <button id="copyBtn" onclick="copyImage()" style="
                         width:100%;
@@ -123,7 +123,6 @@ if st.session_state.processed:
                         border-radius:8px;
                         border:1px solid;
                         border-color : rgba(204, 204, 204, .3);
-                        background-color:rgb(38,39,48);
                         cursor:pointer;
                         margin:0;
                         transition:all 0.2s ease;
