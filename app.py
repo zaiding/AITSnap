@@ -123,7 +123,7 @@ if st.session_state.processed:
                         border-radius:8px;
                         border:1px solid;
                         border-color : rgba(204, 204, 204, .3);
-                        background:rgb(38,39,48);
+                        background-color:rgb(38,39,48);
                         cursor:pointer;
                         margin:0;
                         transition:all 0.2s ease;
