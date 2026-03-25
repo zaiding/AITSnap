@@ -180,7 +180,7 @@ if st.session_state.processed:
 
     extra_instructions = st.text_area(
         label="Additional instructions (optional)",
-        placeholder="e.g. Write 4 lines conclusion.. Answer in French. Be less ...",
+        placeholder="e.g. Write 4 lines conclusion. Be less intense...",
         height=100,
     )
 
