@@ -121,8 +121,8 @@ if st.session_state.processed:
                         height:38px;
                         font-size:15px;
                         border-radius:8px;
-                        border:1px ridge;
-                        border-color : rgba(255, 0, 0, .5);
+                        border:1px solid;
+                        border-color : rgba(204, 204, 204, .1);
                         background:transparent;
                         cursor:pointer;
                         margin:0;
@@ -181,7 +181,7 @@ if st.session_state.processed:
 
     extra_instructions = st.text_area(
         label="Additional instructions (optional)",
-        placeholder="e.g. Focus on structural defects only. Answer in French. Prioritize urgent actions.",
+        placeholder="e.g. Write 4 lines conclusion.. Answer in French. Be less ...",
         height=100,
     )
 
