@@ -158,7 +158,7 @@ if st.session_state.processed:
                 const btn = document.getElementById("copyBtn");
 
                 btn.addEventListener("mouseenter", () => {{
-                    btn.style.background = "rgb(66,68,82)";
+                    btn.style.background = "rgb(38,39,48)";
                 }});
 
                 btn.addEventListener("mouseleave", () => {{
