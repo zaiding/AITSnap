@@ -122,7 +122,7 @@ if st.session_state.processed:
                         font-size:15px;
                         border-radius:8px;
                         border:1px solid;
-                        border-color : rgba(204, 204, 204, .1);
+                        border-color : rgba(204, 204, 204, .3);
                         background:transparent;
                         cursor:pointer;
                         margin:0;
