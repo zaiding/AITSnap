@@ -21,7 +21,6 @@ SEVERITY_COLORS: Dict[str, Optional[str]] = {
     "very high": "ff0000",
     "critical": "ff0000",
     "unknown": None,
-    "unknow": None,
 }
 
 
@@ -331,8 +330,8 @@ def draw_cell_text(
 
 
 def render_sheet_to_png(ws, output_png: str) -> None:
-    header_font = load_font(18, bold=True)
-    body_font = load_font(17, bold=False)
+    header_font = load_font(20, bold=True)
+    body_font = load_font(20, bold=False)
 
     # Convert Excel widths/heights to pixels
     col_widths_px: List[int] = []
