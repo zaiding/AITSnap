@@ -114,7 +114,7 @@ if st.session_state.processed:
         components.html(
             f"""
             <html>
-            <body style="margin:0; padding:0; overflow:hidden; background:rgb(38,39,48);">
+            <body style="margin:0; padding:0; overflow:hidden; background:rgb(19,23,32);">
                 <div style="height:38px; display:flex; align-items:center; justify-content:center;">
                     <button id="copyBtn" onclick="copyImage()" style="
                         width:100%;
