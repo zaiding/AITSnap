@@ -134,6 +134,7 @@ def color_severity_column(ws):
 def optimize_layout(ws):
 
     preferred_widths = {
+        "Video": 18,
         "Created": 18,
         "Position in current video": 16,
         "Position from first video": 16,
@@ -403,11 +404,6 @@ def process_excel(
 
     ws = wb[sheet_name] if sheet_name else wb.active
 
-
-    # delete Video column
-    delete_column_if_needed(ws, "Video", True)
-
-
     # Observation step
     idx = find_column_index(ws, "Observation step")
 
@@ -447,7 +443,7 @@ def process_excel_ai_agent(
     ws = wb[sheet_name] if sheet_name else wb.active
 
 
-    # delete Video column
+    # column
     columns_to_delete = ['Video', 'Created', 'Position in current video', 'Position from first video', 'Code', 'Characteristic 1', 'Characteristic 2', 
                          'Clockface references', 'Continuing defect', 'End of', 'Observation step', 'Longitude', 'Latitude']
     
