@@ -94,7 +94,7 @@ if st.session_state.processed:
         st.download_button(
             label="Download Excel",
             data=st.session_state.excel_bytes,
-            file_name="processed.xlsx",
+            file_name="Observations_table.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True,
         )
