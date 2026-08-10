@@ -5,6 +5,8 @@ import streamlit.components.v1 as components
 from processor import process_excel, process_excel_ai_agent, analyze_data
 
 API_KEY = st.secrets["GEMINI_API_KEY"]
+MAX_ROWS_PER_IMAGE = 50
+
 MY_INSTRUCTIONS = (
             "Write a concise, high-level conclusion of the SewerBall Camera inspection."
             "Requirements:"
@@ -41,8 +43,8 @@ st.write("Upload an inspection Excel file from AIT platform, process it, then do
 for key, default in [
     ("processed", False),
     ("output_excel", None),
-    ("output_png", None),
-    ("image_bytes", None),
+    ("output_pngs", None),
+    ("image_bytes_list", None),
     ("excel_bytes", None),
     ("raw_data", None),
     ("ai_analysis", None),
@@ -68,17 +70,23 @@ if uploaded_file is not None:
             output_png = tmp_out_png.name
 
         with st.spinner("Processing..."):
-            process_excel(input_path, output_excel, output_png)
+            _, output_pngs = process_excel(
+                input_path, output_excel, output_png,
+                max_rows_per_image=MAX_ROWS_PER_IMAGE,
+            )
             st.session_state.raw_data = process_excel_ai_agent(input_path)
 
         with open(output_excel, "rb") as f:
             st.session_state.excel_bytes = f.read()
 
-        with open(output_png, "rb") as f:
-            st.session_state.image_bytes = f.read()
+        image_bytes_list = []
+        for png_path in output_pngs:
+            with open(png_path, "rb") as f:
+                image_bytes_list.append(f.read())
 
+        st.session_state.image_bytes_list = image_bytes_list
         st.session_state.output_excel = output_excel
-        st.session_state.output_png = output_png
+        st.session_state.output_pngs = output_pngs
         st.session_state.processed = True
         st.session_state.ai_analysis = None  # reset analysis on new file
 
@@ -86,93 +94,91 @@ if uploaded_file is not None:
 if st.session_state.processed:
     st.success("Processing finished")
 
-    st.image(st.session_state.image_bytes)
+    image_bytes_list = st.session_state.image_bytes_list
+    n_images = len(image_bytes_list)
 
-    col1, col2, col3 = st.columns(3)
+    if n_images > 1:
+        st.caption(f"Table split into {n_images} images ({MAX_ROWS_PER_IMAGE} observations max per image) for readability.")
 
-    with col1:
-        st.download_button(
-            label="Download Excel",
-            data=st.session_state.excel_bytes,
-            file_name="Observations_table.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True,
-        )
+    for i, img_bytes in enumerate(image_bytes_list):
+        if n_images > 1:
+            st.markdown(f"**Part {i + 1} of {n_images}**")
+        st.image(img_bytes)
 
-    with col2:
-        st.download_button(
-            label="Download Image",
-            data=st.session_state.image_bytes,
-            file_name="table.png",
-            mime="image/png",
-            use_container_width=True,
-        )
+        col1, col2 = st.columns(2)
+        with col1:
+            st.download_button(
+                label=f"Download Image{f' (part {i + 1})' if n_images > 1 else ''}",
+                data=img_bytes,
+                file_name=f"table_part{i + 1}.png" if n_images > 1 else "table.png",
+                mime="image/png",
+                use_container_width=True,
+                key=f"download_img_{i}",
+            )
+        with col2:
+            img_base64 = base64.b64encode(img_bytes).decode()
+            components.html(
+                f"""
+                <html>
+                <body style="margin:0; padding:0; overflow:hidden; background:rgb(19,23,32);">
+                    <div style="height:38px; display:flex; align-items:center; justify-content:center;">
+                        <button id="copyBtn{i}" onclick="copyImage{i}()" style="
+                            width:100%;
+                            height:38px;
+                            font-size:15px;
+                            border-radius:8px;
+                            border:1px solid;
+                            border-color : rgba(204, 204, 204, .3);
+                            cursor:pointer;
+                            margin:0;
+                            transition:all 0.2s ease;
+                        ">
+                            Copy Image
+                        </button>
+                    </div>
 
-    with col3:
-        img_base64 = base64.b64encode(st.session_state.image_bytes).decode()
+                    <script>
+                    function applyTheme{i}() {{
+                        try {{
+                            const btn = document.getElementById("copyBtn{i}");
+                            const parentBody = window.parent.document.body;
+                            const parentStyles = window.parent.getComputedStyle(parentBody);
+                            btn.style.color = parentStyles.color || "inherit";
+                            btn.style.background = "transparent";
+                        }} catch (e) {{}}
+                    }}
 
-        components.html(
-            f"""
-            <html>
-            <body style="margin:0; padding:0; overflow:hidden; background:rgb(19,23,32);">
-                <div style="height:38px; display:flex; align-items:center; justify-content:center;">
-                    <button id="copyBtn" onclick="copyImage()" style="
-                        width:100%;
-                        height:38px;
-                        font-size:15px;
-                        border-radius:8px;
-                        border:1px solid;
-                        border-color : rgba(204, 204, 204, .3);
-                        cursor:pointer;
-                        margin:0;
-                        transition:all 0.2s ease;
-                    ">
-                        Copy Image
-                    </button>
-                </div>
+                    async function copyImage{i}() {{
+                        const response = await fetch("data:image/png;base64,{img_base64}");
+                        const blob = await response.blob();
+                        await navigator.clipboard.write([
+                            new ClipboardItem({{"image/png": blob}})
+                        ]);
+                    }}
 
-                <script>
-                let currentTextColor = "inherit";
+                    const btn{i} = document.getElementById("copyBtn{i}");
+                    btn{i}.addEventListener("mouseenter", () => {{ btn{i}.style.background = "rgb(38,39,48)"; }});
+                    btn{i}.addEventListener("mouseleave", () => {{ btn{i}.style.background = "transparent"; }});
 
-                function applyTheme() {{
-                    try {{
-                        const btn = document.getElementById("copyBtn");
-                        const parentBody = window.parent.document.body;
-                        const parentStyles = window.parent.getComputedStyle(parentBody);
+                    applyTheme{i}();
+                    setInterval(applyTheme{i}, 1000);
+                    </script>
+                </body>
+                </html>
+                """,
+                height=38,
+            )
 
-                        currentTextColor = parentStyles.color || "inherit";
+        if n_images > 1 and i < n_images - 1:
+            st.divider()
 
-                        btn.style.color = currentTextColor;
-                        btn.style.background = "transparent";
-                    }} catch (e) {{}}
-                }}
-
-                async function copyImage() {{
-                    const response = await fetch("data:image/png;base64,{img_base64}");
-                    const blob = await response.blob();
-                    await navigator.clipboard.write([
-                        new ClipboardItem({{"image/png": blob}})
-                    ]);
-                }}
-
-                const btn = document.getElementById("copyBtn");
-
-                btn.addEventListener("mouseenter", () => {{
-                    btn.style.background = "rgb(38,39,48)";
-                }});
-
-                btn.addEventListener("mouseleave", () => {{
-                    btn.style.background = "transparent";
-                }});
-
-                applyTheme();
-                setInterval(applyTheme, 1000);
-                </script>
-            </body>
-            </html>
-            """,
-            height=38,
-        )
+    st.download_button(
+        label="Download Excel",
+        data=st.session_state.excel_bytes,
+        file_name="Observations_table.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        use_container_width=True,
+    )
 
     # --- AI Analysis section (on demand) ---
     st.divider()
@@ -202,6 +208,8 @@ if st.session_state.processed:
             height=400,
             disabled=True,
         )
+        if st.session_state.ai_analysis.startswith("AI analysis failed"):
+            st.error("The AI request failed. See details above — this is usually a blocked/empty response from the model, not a crash in the app.")
         if st.button("Regenerate", help="Regenerate with current instructions"):
             st.session_state.ai_analysis = None
             st.rerun()
