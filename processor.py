@@ -34,6 +34,10 @@ THIN_BORDER = Border(
     bottom=Side(style="thin", color="000000"),
 )
 
+# Max data rows rendered per PNG. Keeping this bounded prevents very tall
+# images from being crushed/rescaled and losing legibility.
+DEFAULT_MAX_ROWS_PER_IMAGE = 50
+
 
 
 # Utility functions
@@ -330,63 +334,111 @@ def draw_cell_text(
         current_y += line_heights[i] + 2
 
 
-def render_sheet_to_png(ws, output_png: str) -> None:
+def _row_chunks(total_data_rows: int, max_rows_per_image: int) -> List[Tuple[int, int]]:
+    """Return (start_row, end_row) pairs (1-indexed, data rows start at row 2)."""
+    if total_data_rows <= 0:
+        return []
+
+    chunks = []
+    start = 2
+    last_row = 1 + total_data_rows
+    while start <= last_row:
+        end = min(start + max_rows_per_image - 1, last_row)
+        chunks.append((start, end))
+        start = end + 1
+    return chunks
+
+
+def render_sheet_to_png(
+    ws,
+    output_png: str,
+    max_rows_per_image: int = DEFAULT_MAX_ROWS_PER_IMAGE,
+) -> List[str]:
+    """
+    Render the worksheet to one or more PNG images, capping each image at
+    `max_rows_per_image` data rows (plus the repeated header row) so large
+    sheets don't get squeezed into one huge, low-legibility image.
+
+    Returns a list of output file paths (in order). If the sheet fits in a
+    single chunk, this returns exactly [output_png] (unchanged filename).
+    """
     header_font = load_font(20, bold=True)
     body_font = load_font(20, bold=False)
 
-    # Convert Excel widths/heights to pixels
+    # Column widths are computed once and reused for every chunk so images
+    # stay visually consistent.
     col_widths_px: List[int] = []
     for col in range(1, ws.max_column + 1):
         width = ws.column_dimensions[get_column_letter(col)].width or 10
         col_widths_px.append(int(width * 8 + 12))
 
-    row_heights_px: List[int] = []
-    for row in range(1, ws.max_row + 1):
-        height = ws.row_dimensions[row].height or 20
-        row_heights_px.append(int(height * 4))
+    def row_height_px(row_idx: int) -> int:
+        height = ws.row_dimensions[row_idx].height or 20
+        return int(height * 4)
 
-    img_width = sum(col_widths_px) + 1
-    img_height = sum(row_heights_px) + 1
+    total_data_rows = max(ws.max_row - 1, 0)
+    chunks = _row_chunks(total_data_rows, max_rows_per_image)
 
-    img = Image.new("RGB", (img_width, img_height), "white")
-    draw = ImageDraw.Draw(img)
+    if not chunks:
+        chunks = [(2, 1)]  # header-only sheet edge case; produces just the header row
 
-    y = 0
-    for r in range(1, ws.max_row + 1):
-        x = 0
-        for c in range(1, ws.max_column + 1):
-            cell = ws.cell(r, c)
-            cell_w = col_widths_px[c - 1]
-            cell_h = row_heights_px[r - 1]
+    output_paths: List[str] = []
+    output_path_obj = Path(output_png)
+    single_chunk = len(chunks) == 1
 
-            fill_rgb = rgb_from_openpyxl_color(cell.fill)
+    for i, (start_row, end_row) in enumerate(chunks, start=1):
+        row_indices = [1] + ([] if end_row < start_row else list(range(start_row, end_row + 1)))
 
-            # Cell background + border
-            draw.rectangle(
-                [x, y, x + cell_w, y + cell_h],
-                fill=fill_rgb,
-                outline="black",
-                width=1
-            )
+        row_heights_px = [row_height_px(r) for r in row_indices]
+        img_width = sum(col_widths_px) + 1
+        img_height = sum(row_heights_px) + 1
 
-            active_font = header_font if r == 1 else body_font
+        img = Image.new("RGB", (img_width, img_height), "white")
+        draw = ImageDraw.Draw(img)
 
-            draw_cell_text(
-                draw=draw,
-                cell=cell,
-                x=x,
-                y=y,
-                cell_w=cell_w,
-                cell_h=cell_h,
-                font=active_font,
-                padding_x=8,
-                padding_y=6,
-            )
+        y = 0
+        for r_pos, r in enumerate(row_indices):
+            x = 0
+            cell_h = row_heights_px[r_pos]
+            for c in range(1, ws.max_column + 1):
+                cell = ws.cell(r, c)
+                cell_w = col_widths_px[c - 1]
 
-            x += cell_w
-        y += row_heights_px[r - 1]
+                fill_rgb = rgb_from_openpyxl_color(cell.fill)
 
-    img.save(output_png)
+                draw.rectangle(
+                    [x, y, x + cell_w, y + cell_h],
+                    fill=fill_rgb,
+                    outline="black",
+                    width=1
+                )
+
+                active_font = header_font if r == 1 else body_font
+
+                draw_cell_text(
+                    draw=draw,
+                    cell=cell,
+                    x=x,
+                    y=y,
+                    cell_w=cell_w,
+                    cell_h=cell_h,
+                    font=active_font,
+                    padding_x=8,
+                    padding_y=6,
+                )
+
+                x += cell_w
+            y += cell_h
+
+        if single_chunk:
+            out_path = str(output_path_obj)
+        else:
+            out_path = str(output_path_obj.with_name(f"{output_path_obj.stem}_part{i}{output_path_obj.suffix}"))
+
+        img.save(out_path)
+        output_paths.append(out_path)
+
+    return output_paths
 
 
 
@@ -397,7 +449,8 @@ def process_excel(
     input_xlsx: str,
     output_xlsx: str,
     output_png: str,
-    sheet_name: Optional[str] = None
+    sheet_name: Optional[str] = None,
+    max_rows_per_image: int = DEFAULT_MAX_ROWS_PER_IMAGE,
 ):
 
     wb = load_workbook(input_xlsx)
@@ -427,9 +480,9 @@ def process_excel(
     optimize_layout(ws)
 
     wb.save(output_xlsx)
-    render_sheet_to_png(ws, output_png)
+    output_pngs = render_sheet_to_png(ws, output_png, max_rows_per_image=max_rows_per_image)
 
-    return output_xlsx, output_png
+    return output_xlsx, output_pngs
 
 
 
@@ -464,6 +517,58 @@ def process_excel_ai_agent(
     return sheet_text
 
 
+def _extract_text_safely(response) -> str:
+    """
+    Pull text out of a Gemini response without relying on the `.text`
+    convenience property, which raises instead of returning None/"" when a
+    response has no valid text part (e.g. blocked by safety filters, cut off
+    by MAX_TOKENS, or otherwise finished abnormally). Longer or user-modified
+    prompts are more likely to hit that path, so we extract from
+    `candidates` directly and treat "no text" as an empty result rather than
+    letting the exception escape.
+    """
+    try:
+        text = getattr(response, "text", None)
+        if text:
+            return text
+    except Exception:
+        pass
+
+    try:
+        parts_text = []
+        for candidate in getattr(response, "candidates", None) or []:
+            content = getattr(candidate, "content", None)
+            if not content:
+                continue
+            for part in getattr(content, "parts", None) or []:
+                part_text = getattr(part, "text", None)
+                if part_text:
+                    parts_text.append(part_text)
+        return "\n".join(parts_text).strip()
+    except Exception:
+        return ""
+
+
+def _response_block_reason(response) -> Optional[str]:
+    """Best-effort extraction of why a response might have no usable text."""
+    try:
+        feedback = getattr(response, "prompt_feedback", None)
+        block_reason = getattr(feedback, "block_reason", None) if feedback else None
+        if block_reason:
+            return f"prompt blocked: {block_reason}"
+    except Exception:
+        pass
+
+    try:
+        for candidate in getattr(response, "candidates", None) or []:
+            finish_reason = getattr(candidate, "finish_reason", None)
+            if finish_reason and str(finish_reason).upper() not in ("STOP", "1"):
+                return f"finish_reason={finish_reason}"
+    except Exception:
+        pass
+
+    return None
+
 
 def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
     client = genai.Client(api_key=API_KEY)
@@ -473,7 +578,7 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
         f"RAW DATA TO ANALYZE:\n---\n{raw_data}\n---"
     )
 
-    # Try models in order until one works
+    # Try models in order until one returns usable text.
     models_to_try = [
         "gemini-2.5-flash",
         "gemini-2.0-flash-lite",
@@ -481,11 +586,23 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
         "gemini-1.5-pro-latest",
     ]
 
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=combined_input,
-        )
-        return response.text or ""
-    except Exception as e:
-        return f"AI analysis failed: {e}"
+    errors: List[str] = []
+
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=combined_input,
+            )
+        except Exception as e:
+            errors.append(f"{model_name}: request failed ({e})")
+            continue
+
+        text = _extract_text_safely(response)
+        if text:
+            return text
+
+        reason = _response_block_reason(response) or "no text returned"
+        errors.append(f"{model_name}: {reason}")
+
+    return "AI analysis failed: " + "; ".join(errors)
