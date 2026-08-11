@@ -579,11 +579,15 @@ def analyze_data(prompt_text: str, raw_data, API_KEY: str) -> str:
     )
 
     # Try models in order until one returns usable text.
+    # Note (Aug 2026): gemini-2.0-flash-lite and all gemini-1.5-* models have
+    # been retired by Google and return 404. gemini-2.5-flash is active but
+    # scheduled for shutdown Oct 16, 2026 - keep an eye on
+    # https://ai.google.dev/gemini-api/docs/deprecations for updates.
     models_to_try = [
         "gemini-2.5-flash",
-        "gemini-2.0-flash-lite",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro-latest",
+        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash",
+        "gemini-3.6-flash",
     ]
 
     errors: List[str] = []
