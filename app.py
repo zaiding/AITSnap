@@ -5,7 +5,7 @@ import streamlit.components.v1 as components
 from processor import process_excel, process_excel_ai_agent, analyze_data
 
 API_KEY = st.secrets["GEMINI_API_KEY"]
-MAX_ROWS_PER_IMAGE = 50
+MAX_ROWS_PER_IMAGE = 25
 
 MY_INSTRUCTIONS = (
             "Write a concise, high-level conclusion of the SewerBall Camera inspection."
