@@ -121,13 +121,11 @@ def apply_basic_formatting(ws):
 
 
 def color_severity_column(ws):
-
     idx = find_column_index(ws, "Severity")
-    if not idx:
+    if idx is None:
         return
 
     for row in range(2, ws.max_row + 1):
-
         cell = ws.cell(row, idx)
         text = normalize_text(cell.value).casefold()
 
@@ -137,8 +135,6 @@ def color_severity_column(ws):
             fill = SEVERITY_COLORS["very high"]
         elif "Critique" in text:
             fill = SEVERITY_COLORS["critical"]
-        elif text == "unknown":
-            fill = None
         elif "Moyenne" in text:
             fill = SEVERITY_COLORS["medium"]
         elif "élevée" in text:
@@ -151,16 +147,21 @@ def color_severity_column(ws):
             fill = SEVERITY_COLORS["very high"]
         elif "critical" in text:
             fill = SEVERITY_COLORS["critical"]
-        elif text in {"unknown", "unknow"}:
-            fill = None
         elif "medium" in text:
             fill = SEVERITY_COLORS["medium"]
         elif "high" in text:
             fill = SEVERITY_COLORS["high"]
         elif "low" in text:
             fill = SEVERITY_COLORS["low"]
+        elif text in {"unknown", "unknow"}:
+            fill = None
         else:
             fill = None
+
+        if fill is None:
+            cell.fill = PatternFill(fill_type="solid", fgColor="FFFFFF")
+        else:
+            cell.fill = PatternFill(fill_type="solid", fgColor=fill)
 
 # Layout optimisation
 
