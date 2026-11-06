@@ -129,7 +129,7 @@ def color_severity_column(ws):
     for row in range(2, ws.max_row + 1):
 
         cell = ws.cell(row, idx)
-                text = normalize_text(cell.value).casefold()
+        text = normalize_text(cell.value).casefold()
 
         if "très faible" in text:
             fill = SEVERITY_COLORS["very low"]
