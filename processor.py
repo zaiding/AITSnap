@@ -131,15 +131,15 @@ def color_severity_column(ws):
         cell = ws.cell(row, idx)
         text = normalize_text(cell.value).casefold()
 
-        if "très faible" in text:
+        if "Très faible" in text:
             fill = SEVERITY_COLORS["very low"]
-        elif "très élevée" in text:
+        elif "Très élevée" in text:
             fill = SEVERITY_COLORS["very high"]
-        elif "critique" in text:
+        elif "Critique" in text:
             fill = SEVERITY_COLORS["critical"]
         elif text == "unknown":
             fill = None
-        elif "moyenne" in text:
+        elif "Moyenne" in text:
             fill = SEVERITY_COLORS["medium"]
         elif "élevée" in text:
             fill = SEVERITY_COLORS["high"]
