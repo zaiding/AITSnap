@@ -133,9 +133,9 @@ def color_severity_column(ws):
             fill = SEVERITY_COLORS["very low"]
         elif "Très élevée" in text:
             fill = SEVERITY_COLORS["very high"]
-        elif "Critique" in text:
+        elif "critique" in text:
             fill = SEVERITY_COLORS["critical"]
-        elif "Moyenne" in text:
+        elif "moyenne" in text:
             fill = SEVERITY_COLORS["medium"]
         elif "élevée" in text:
             fill = SEVERITY_COLORS["high"]
