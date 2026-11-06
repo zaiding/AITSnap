@@ -48,13 +48,40 @@ def normalize_text(value) -> str:
         return ""
     return str(value).strip()
 
+COLUMN_ALIASES = {
+    "Video": "Vidéo",
+    "Created": "Créé",
+    "Position in current video": "Position dans la vidéo actuelle",
+    "Position from first video": "Position depuis la première vidéo",
+    "Position from the start (m)": "Distance depuis le premier regard (m)",
+    "Distance from the previous manhole (m)": "Distance depuis le regard précédent (m)",
+    "Code": "Code",
+    "Characteristic 1": "Carac 1",
+    "Characteristic 2": "Carac 2",
+    "Observation type": "Type d'observation",
+    "Clockface references": "Cadran horaire",
+    "Continuing defect": "Défaut continue",
+    "End of": "Fin de",
+    "Observation step": "Pas d'observation",
+    "Note": "Remarque",
+    "Severity": "Gravité",
+    "Longitude": "Longitude",
+    "Latitude": "Latitude",
+}
+
 
 def find_column_index(ws, column_name: str) -> Optional[int]:
+    accepted_names = {
+        column_name.strip().casefold(),
+        COLUMN_ALIASES.get(column_name, "").strip().casefold(),
+    }
+    accepted_names.discard("")
+
     for col in range(1, ws.max_column + 1):
-        if normalize_text(ws.cell(1, col).value).lower() == column_name.lower():
+        header = normalize_text(ws.cell(1, col).value).casefold()
+        if header in accepted_names:
             return col
     return None
-
 
 def delete_column_if_needed(ws, column_name: str, should_delete: bool) -> None:
     idx = find_column_index(ws, column_name)
@@ -102,38 +129,40 @@ def color_severity_column(ws):
     for row in range(2, ws.max_row + 1):
 
         cell = ws.cell(row, idx)
-        text = normalize_text(cell.value).lower()
+                text = normalize_text(cell.value).casefold()
 
-        fill = None
-
-        if "very low" in text:
+        if "très faible" in text:
             fill = SEVERITY_COLORS["very low"]
-
+        elif "très élevée" in text:
+            fill = SEVERITY_COLORS["very high"]
+        elif "critique" in text:
+            fill = SEVERITY_COLORS["critical"]
+        elif text == "unknown":
+            fill = None
+        elif "moyenne" in text:
+            fill = SEVERITY_COLORS["medium"]
+        elif "élevée" in text:
+            fill = SEVERITY_COLORS["high"]
+        elif "faible" in text:
+            fill = SEVERITY_COLORS["low"]
+        elif "very low" in text:
+            fill = SEVERITY_COLORS["very low"]
         elif "very high" in text:
             fill = SEVERITY_COLORS["very high"]
-
         elif "critical" in text:
             fill = SEVERITY_COLORS["critical"]
-
-        elif text in ["unknown", "unknow"]:
+        elif text in {"unknown", "unknow"}:
             fill = None
-
         elif "medium" in text:
             fill = SEVERITY_COLORS["medium"]
-
         elif "high" in text:
             fill = SEVERITY_COLORS["high"]
-
         elif "low" in text:
             fill = SEVERITY_COLORS["low"]
-
-        if fill:
-            cell.fill = PatternFill(fill_type="solid", fgColor=fill)
-
-
+        else:
+            fill = None
 
 # Layout optimisation
-
 
 def optimize_layout(ws):
 
